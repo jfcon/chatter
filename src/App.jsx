@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageContainer from './MessageContainer.jsx';
 import Nav from './Nav.jsx';
+const uuidv1 = require('uuid/v1');
 
 class App extends Component {
   constructor(props) {
@@ -10,9 +11,12 @@ class App extends Component {
       currentUser: 'Anonymous',
       messages: []
     };
-    this.socket = new WebSocket('ws://localhost:3001');
     this.onNewPost = this.onNewPost.bind(this);
     this.onNewUser = this.onNewUser.bind(this);
+    this.incMessage = this.incMessage.bind(this);
+
+    this.socket = new WebSocket('ws://localhost:3001');
+    this.socket.addEventListener('message', this.incMessage);
   }
 
   componentDidMount() {
@@ -39,13 +43,21 @@ class App extends Component {
 
   onNewPost(content) {
     const newMessage = {
+      id: uuidv1(),
       username: this.state.currentUser,
       content: content
     };
     this.socket.send(JSON.stringify(newMessage));
-    // const messages = this.state.messages.concat(newMessage);
-    // this.setState({ messages: messages });
     console.log('Sent message to server', newMessage);
+  }
+
+  incMessage(message) {
+    let msg = JSON.parse(message.data);
+    console.log(msg);
+    //build the whatever
+    // push to array
+    const messages = this.state.messages.concat(msg);
+    this.setState({ messages: messages });
   }
 
   render() {
