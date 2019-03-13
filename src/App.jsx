@@ -8,7 +8,7 @@ class App extends Component {
     super(props);
     this.state = {
       currentUser: 'Anonymous',
-      messages: [{ id: 1, username: 'Bobby', content: 'hello' }, { id: 2, username: 'Sally', content: 'a/s/l?' }]
+      messages: []
     };
     this.socket = new WebSocket('ws://localhost:3001');
     this.onNewPost = this.onNewPost.bind(this);
@@ -42,8 +42,10 @@ class App extends Component {
       username: this.state.currentUser,
       content: content
     };
-    const messages = this.state.messages.concat(newMessage);
-    this.setState({ messages: messages });
+    this.socket.send(JSON.stringify(newMessage));
+    // const messages = this.state.messages.concat(newMessage);
+    // this.setState({ messages: messages });
+    console.log('Sent message to server', newMessage);
   }
 
   render() {
