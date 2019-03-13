@@ -10,7 +10,7 @@ class App extends Component {
       currentUser: 'Anonymous',
       messages: [{ id: 1, username: 'Bobby', content: 'hello' }, { id: 2, username: 'Sally', content: 'a/s/l?' }]
     };
-
+    this.socket = new WebSocket('ws://localhost:3001');
     this.onNewPost = this.onNewPost.bind(this);
     this.onNewUser = this.onNewUser.bind(this);
   }
@@ -26,6 +26,11 @@ class App extends Component {
       // Calling setState will trigger a call to render() in App and all child components.
       this.setState({ messages: messages });
     }, 3000);
+
+    // server and client websockets are connected
+    this.socket.onopen = event => {
+      console.log('Connected to Server!');
+    };
   }
 
   onNewUser(user) {
