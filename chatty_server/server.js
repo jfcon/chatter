@@ -1,4 +1,3 @@
-// server.js
 const uuidv1 = require('uuid/v1');
 const express = require('express');
 const SocketServer = require('ws');
@@ -15,44 +14,64 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer.Server({ server });
 
+wss.sendConnectedUsers = client => {
+  let connectedUsers = wss.clients.size;
+  let userData = {
+    type: 'userCount',
+    users: 0
+  };
+
+  wss.clients.forEach(client => {
+    if (connectedUsers >= 1) {
+      userData.users = connectedUsers;
+      client.send(JSON.stringify(userData));
+    }
+  });
+};
+
+wss.handleMessageType = temp => {
+  let msg = JSON.parse(temp);
+  if (msg.type === 'postMessage') {
+    msg.type = 'incomingMessage';
+    msg.id = uuidv1();
+  }
+  if (msg.type === 'postNotification') {
+    msg.type = 'incomingNotification';
+  }
+  wss.clients.forEach(client => {
+    if (client.readyState === SocketServer.OPEN) {
+      client.send(JSON.stringify(msg));
+    }
+  });
+};
+// if (msg.content[0] === '/') {
+//   const parts = msg.content.split(' ');
+//   const cmd = parts[0].replace('/', '').toLowerCase();
+//   msg.content = parts.slice(1).join(' ');
+
+//   switch (cmd) {
+//     case 'me':
+//       msg.type = 'meMessage';
+//       break;
+//     default:
+//       msg.type = 'errorMessage';
+//       break;
+//   }
+// }
+
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on('connection', ws => {
-  console.log('Client connected');
+  wss.sendConnectedUsers();
 
   ws.on('message', message => {
-    let msg = JSON.parse(message);
-    if (msg.type === 'postMessage') {
-      msg.type = 'incomingMessage';
-      msg.id = uuidv1();
-    }
-    if (msg.type === 'postNotification') {
-      msg.type = 'incomingNotification';
-    }
-    if (msg.content[0] === '/') {
-      const parts = msg.content.split(' ');
-      const cmd = parts[0].replace('/', '').toLowerCase();
-      msg.content = parts.slice(1).join(' ');
-
-      switch (cmd) {
-        case 'me':
-          msg.type = 'meMessage';
-          break;
-        default:
-          msg.type = 'errorMessage';
-          break;
-      }
-    }
-
-    // console.log(`User ${msg.username} says "${msg.content}" with id ${msg.id}`);
-    wss.clients.forEach(client => {
-      if (client.readyState === SocketServer.OPEN) {
-        client.send(JSON.stringify(msg));
-      }
-    });
+    wss.handleMessageType(message);
   });
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', () => console.log('Client disconnected'));
+  ws.on('close', () => {
+    console.log('Client disconnected');
+    wss.sendConnectedUsers();
+  });
 });
