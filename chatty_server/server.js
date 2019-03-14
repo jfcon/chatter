@@ -1,5 +1,5 @@
 // server.js
-
+const uuidv1 = require('uuid/v1');
 const express = require('express');
 const SocketServer = require('ws');
 
@@ -23,8 +23,13 @@ wss.on('connection', ws => {
 
   ws.on('message', message => {
     let msg = JSON.parse(message);
-    msg.type = 'textMessage';
-
+    if (msg.type === 'postMessage') {
+      msg.type = 'incomingMessage';
+      msg.id = uuidv1();
+    }
+    if (msg.type === 'postNotification') {
+      msg.type = 'incomingNotification';
+    }
     if (msg.content[0] === '/') {
       const parts = msg.content.split(' ');
       const cmd = parts[0].replace('/', '').toLowerCase();

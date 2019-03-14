@@ -37,22 +37,29 @@ class App extends Component {
   }
 
   onNewUser(user) {
+    const oldUserName = this.state.currentUser;
     this.setState({ currentUser: user });
+    const newUserMessage = {
+      type: 'postNotification',
+      content: `${oldUserName} has changed their name to ${user}`
+    };
+    this.socket.send(JSON.stringify(newUserMessage));
+    console.log('New Username message sent to server', newUserMessage);
   }
 
   onNewPost(content) {
     const newMessage = {
-      id: uuidv1(),
+      type: 'postMessage',
       username: this.state.currentUser,
       content: content
     };
     this.socket.send(JSON.stringify(newMessage));
-    console.log('Sent message to server', newMessage);
+    console.log('Client sending message to server', newMessage);
   }
 
   incMessage(message) {
     let msg = JSON.parse(message.data);
-    console.log(msg);
+    console.log('Server broadcasts: ', msg);
     const messages = this.state.messages.concat(msg);
     this.setState({ messages: messages });
   }
