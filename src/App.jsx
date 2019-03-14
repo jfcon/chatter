@@ -22,14 +22,13 @@ class App extends Component {
   componentDidMount() {
     console.log('componentDidMount <App />');
     setTimeout(() => {
-      console.log('Simulating incoming message');
       // Add a new message to the list of messages in the data store
-      const newMessage = { id: 3, username: 'Michelle', content: 'Hello there!' };
+      const newMessage = { id: 'welcome', username: 'ChatBot', content: 'Hello there! Please enter a username to start chatting!' };
       const messages = this.state.messages.concat(newMessage);
       // Update the state of the app component.
       // Calling setState will trigger a call to render() in App and all child components.
       this.setState({ messages: messages });
-    }, 3000);
+    }, 1500);
 
     // server and client websockets are connected
     this.socket.onopen = event => {
@@ -54,8 +53,6 @@ class App extends Component {
   incMessage(message) {
     let msg = JSON.parse(message.data);
     console.log(msg);
-    //build the whatever
-    // push to array
     const messages = this.state.messages.concat(msg);
     this.setState({ messages: messages });
   }

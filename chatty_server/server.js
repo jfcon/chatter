@@ -23,7 +23,24 @@ wss.on('connection', ws => {
 
   ws.on('message', message => {
     let msg = JSON.parse(message);
-    console.log(`User ${msg.username} says "${msg.content}" with id ${msg.id}`);
+    msg.type = 'textMessage';
+
+    if (msg.content[0] === '/') {
+      const parts = msg.content.split(' ');
+      const cmd = parts[0].replace('/', '').toLowerCase();
+      msg.content = parts.slice(1).join(' ');
+
+      switch (cmd) {
+        case 'me':
+          msg.type = 'meMessage';
+          break;
+        default:
+          msg.type = 'errorMessage';
+          break;
+      }
+    }
+
+    // console.log(`User ${msg.username} says "${msg.content}" with id ${msg.id}`);
     wss.clients.forEach(client => {
       if (client.readyState === SocketServer.OPEN) {
         client.send(JSON.stringify(msg));
