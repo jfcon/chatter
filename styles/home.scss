@@ -78,7 +78,7 @@ body {
 }
 
 .navbar-brand {
-  color: inherit;
+  color: whitesmoke;
   display: block;
   float: left;
   font-weight: 700;
@@ -87,4 +87,20 @@ body {
   line-height: 60px;
   padding: 0 10px;
   text-decoration: none;
+}
+
+.userCount {
+  position: relative;
+  top: 8px;
+  float: right;
+  color: whitesmoke;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 0 10px;
+}
+
+.teethIcon {
+  max-width: 40px;
+  float: left;
+  padding: 10px;
 }

@@ -29,8 +29,8 @@ wss.sendConnectedUsers = client => {
   });
 };
 
-wss.handleMessageType = temp => {
-  let msg = JSON.parse(temp);
+wss.handleMessageType = data => {
+  let msg = JSON.parse(data);
   if (msg.type === 'postMessage') {
     msg.type = 'incomingMessage';
     msg.id = uuidv1();
@@ -38,31 +38,33 @@ wss.handleMessageType = temp => {
   if (msg.type === 'postNotification') {
     msg.type = 'incomingNotification';
   }
+  if (msg.content[0] === '/') {
+    const parts = msg.content.split(' ');
+    const cmd = parts[0].replace('/', '').toLowerCase();
+    msg.content = parts.slice(1).join(' ');
+
+    switch (cmd) {
+      case 'me':
+        msg.type = 'meMessage';
+        break;
+      default:
+        msg.type = 'errorMessage';
+        msg.content = 'Sorry, that is not a valid "/" command.';
+        break;
+    }
+  }
   wss.clients.forEach(client => {
     if (client.readyState === SocketServer.OPEN) {
       client.send(JSON.stringify(msg));
     }
   });
 };
-// if (msg.content[0] === '/') {
-//   const parts = msg.content.split(' ');
-//   const cmd = parts[0].replace('/', '').toLowerCase();
-//   msg.content = parts.slice(1).join(' ');
-
-//   switch (cmd) {
-//     case 'me':
-//       msg.type = 'meMessage';
-//       break;
-//     default:
-//       msg.type = 'errorMessage';
-//       break;
-//   }
-// }
 
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on('connection', ws => {
+  console.log('Client connected');
   wss.sendConnectedUsers();
 
   ws.on('message', message => {

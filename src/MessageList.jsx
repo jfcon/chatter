@@ -6,6 +6,13 @@ class MessageList extends Component {
       case 'meMessage':
         return <span className='message system'>{this.props.content}</span>;
         break;
+      case 'errorMessage':
+        return (
+          <span className='message system'>
+            <em>(on visible to you)</em>
+            {this.props.content}
+          </span>
+        );
       default:
         return <span className='message-content'>{this.props.content}</span>;
         break;
@@ -17,7 +24,6 @@ class MessageList extends Component {
       <div className='message'>
         <span className='message-username'>{this.props.username}</span>
         {this.handleContent()}
-        {/* <div className='message system'>Anonymous1 changed their name to nomnom.</div> */}
       </div>
     );
   }

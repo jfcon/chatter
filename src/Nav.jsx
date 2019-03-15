@@ -9,9 +9,10 @@ class Nav extends Component {
       <div>
         <nav className='navbar'>
           <a href='/' className='navbar-brand'>
-            Chatty
+            <img className='teethIcon' src='/public/images/chattering-teeth.png' />
+            chatter
           </a>
-          <p>User count: {this.props.userCount}</p>
+          <p className='userCount'>User(s) online: {this.props.userCount}</p>
         </nav>
       </div>
     );
