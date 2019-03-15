@@ -4,15 +4,9 @@ class MessageList extends Component {
   handleContent = () => {
     switch (this.props.type) {
       case 'meMessage':
-        return <span className='message system'>{this.props.content}</span>;
+      case 'incomingNotification':
+        return <span className='message-system'>{this.props.content}</span>;
         break;
-      case 'errorMessage':
-        return (
-          <span className='message system'>
-            <em>(on visible to you)</em>
-            {this.props.content}
-          </span>
-        );
       default:
         return <span className='message-content'>{this.props.content}</span>;
         break;
