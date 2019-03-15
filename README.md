@@ -6,11 +6,11 @@ This was a week-long project to introduce and better understand how React and We
 
 ### Setup
 
-Install the dependencies and start the server.
+Install the dependencies then start the server and Webpack compiler.
 
 ```
 npm install
-npm start
+npm start //Once for server, once for Webpack
 open http://localhost:3000
 ```
 
