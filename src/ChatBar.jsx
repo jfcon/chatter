@@ -28,10 +28,16 @@ class ChatBar extends Component {
     });
   }
 
+  // when client presses Enter, checks to see if message field is empty.
+  // if field has content, send to server to be posted
   keyPress(evt) {
     if (evt.keyCode == 13) {
-      this.props.onNewPost(this.state.content);
-      this.setState({ content: '' });
+      if (!this.state.content == '') {
+        this.props.onNewPost(this.state.content);
+        this.setState({ content: '' });
+      } else {
+        alert('Please enter a message.');
+      }
     }
   }
 
@@ -41,6 +47,8 @@ class ChatBar extends Component {
     });
   }
 
+  // When client enters a new username and presses Enter,
+  // sends new Current User's username to the server to be posted to the chat
   onUserKeyChange(evt) {
     if (evt.keyCode == 13) {
       this.props.onNewUser(this.state.user);

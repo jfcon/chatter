@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 class MessageList extends Component {
+  // Checks message type to see what style should be applied
   handleContent = () => {
     switch (this.props.type) {
       case 'meMessage':

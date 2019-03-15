@@ -14,6 +14,7 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer.Server({ server });
 
+// Counts the number of clients currently on the server
 wss.sendConnectedUsers = client => {
   let connectedUsers = wss.clients.size;
   let userData = {
@@ -29,6 +30,7 @@ wss.sendConnectedUsers = client => {
   });
 };
 
+// checks message type and content
 wss.handleMessageType = data => {
   let msg = JSON.parse(data);
   if (msg.type === 'postMessage') {
@@ -38,6 +40,8 @@ wss.handleMessageType = data => {
   if (msg.type === 'postNotification') {
     msg.type = 'incomingNotification';
   }
+
+  // if content starts with '/', handle as a MeMessage
   if (msg.content[0] === '/') {
     const parts = msg.content.split(' ');
     const cmd = parts[0].replace('/', '').toLowerCase();

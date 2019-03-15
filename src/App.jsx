@@ -32,6 +32,7 @@ class App extends Component {
     this.setState({ userCount: user.users });
   }
 
+  // Sending a client's new username to the server
   onNewUser(user) {
     const oldUserName = this.state.currentUser;
     this.setState({ currentUser: user });
@@ -43,6 +44,7 @@ class App extends Component {
     console.log('New Username message sent to server', newUserMessage);
   }
 
+  // Sending a message to the server
   onNewPost(content) {
     const newMessage = {
       type: 'postMessage',
@@ -53,6 +55,7 @@ class App extends Component {
     console.log('Client sending message to server', newMessage);
   }
 
+  // incoming messages returning from the server
   incMessage(message) {
     let msg = JSON.parse(message.data);
     if (msg.type === 'userCount') {
